@@ -84,10 +84,10 @@ jobs:
   # ── JOB 4: UPDATE K8s MANIFEST ───────────────────────
   update-k8s:
     runs-on: ubuntu-latest
-    permission: 
-    content: write
     needs: dast
     if: github.ref == 'refs/heads/main'
+    permission:
+      contents: write
     steps:
     - uses: actions/checkout@v4
       with:
