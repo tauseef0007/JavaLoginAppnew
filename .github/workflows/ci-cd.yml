@@ -56,8 +56,11 @@ jobs:
         push: true
         tags: |
           ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
-          ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          # github.sha = commit ka unique ID — har build ka alag tag
+          ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }} 
+
+
+         
+          
  
   # ── JOB 3: DAST ──────────────────────────────────────
   dast:
