@@ -22,3 +22,16 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+
+cd ~/JavaLoginPracticeApp
+ 
+cat > .gitignore << 'EOF'
+target/              # Maven build output
+*.jar                # Java archives
+*.war                # Web archives
+minikube-linux-amd64 # Minikube binary (128MB!)
+bfg-*.jar            # BFG tool
+.DS_Store            # Mac files
+*.class              # Compiled Java
+EOF

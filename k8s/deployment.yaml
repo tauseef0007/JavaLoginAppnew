@@ -1,0 +1,28 @@
+apiVersion: apps/v1                         #K8s api version 
+kind: Deployment                            #Resource type
+metadata:
+  app: java-login-app
+  namespace: default 
+spec:
+  replicas: 4                               # Copy chalane k liye 
+  
+  selector:
+    matchLabels:
+      app: java-login-app                    #Service se EXACTLY match karo!
+  template:
+    metadata:
+      labels:
+        app: java-login-app                 #Selector se EXACTLY match karo!
+    spec:
+      containers:
+      - name: java-login-app
+        image: tauseef0007/java-login-app:latest #Docker hub Reposository
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "256Mi"                # Minimum guaranteed RAM
+            cpu: "250m"                    # 0.25 CPU core
+          limits:
+            memory: "512Mi"                # Maximum allowed RAM
+            cpu: "500m"                     # 0.5 CPU core
