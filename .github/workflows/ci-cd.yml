@@ -94,35 +94,6 @@ jobs:
     - name: Update Image Tag
       run: |
         sed -i "s|image:.*java-login-app.*|image: ${{ secrets.DOCKERHUB_USERNAME }}/java-login-app:${{ github.sha }}|g" k8s/deployment.yaml
-        
-                                      /usr/bin/docker buildx build --iidfile /home/runner/work/_temp/docker-actions-toolkit-YfqvGM/build-iidfile-65b5044a43.txt --tag ***/java-login-app:latest --tag ***/java-login-app:2ab716433073851dcbbcbc08f2eec30a778c325f --metadata-file /home/runner/work/_temp/docker-actions-toolkit-YfqvGM/build-metadata-63892f3d1c.json --push .
-#0 building with "default" instance using docker driver
-#1 [internal] load build definition from dockerfile
-#1 transferring dockerfile: 408B done
-#1 DONE 0.0s
-#2 [auth] library/maven:pull token for registry-1.docker.io
-#2 DONE 0.0s
-#3 [auth] library/tomcat:pull token for registry-1.docker.io
-#3 DONE 0.0s
-#4 [internal] load metadata for docker.io/library/maven:3.9.4-eclipse-temurin-17
-#4 ...
-#5 [internal] load metadata for docker.io/library/tomcat:10.1jre17-temurin
-#5 ERROR: docker.io/library/tomcat:10.1jre17-temurin: not found
-#4 [internal] load metadata for docker.io/library/maven:3.9.4-eclipse-temurin-17
-#4 CANCELED
-------
- > [internal] load metadata for docker.io/library/tomcat:10.1jre17-temurin:
-------
-dockerfile:14
---------------------
-  12 |     # RUN stage --2
-  13 |     
-  14 | >>> FROM tomcat:10.1jre17-temurin
-  15 |     RUN rm -rf usr/local/tomcat/webapps/*
-  16 |     COPY --from=build app/tomcat/*.war usr/locat/tomcat/webapps/ROOT.war
---------------------
-ERROR: failed to build: failed to solve: tomcat:10.1jre17-temurin: failed to resolve source metadata for docker.io/library/tomcat:10.1jre17-temurin: docker.io/library/tomcat:10.1jre17-temurin: not found
-Error: buildx failed with: ERROR: failed to build: failed to solve: tomcat:10.1jre17-temurin: failed to resolve source metadata for docker.io/library/tomcat:10.1jre17-temurin: docker.io/library/tomcat:10.1jre17-temurin: not found
     - name: Commit and Push
       run: |
         git config user.name 'GitHub Actions Bot'
