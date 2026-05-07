@@ -1,0 +1,142 @@
+trigger:
+- none
+
+pool:
+  name: tauseefpool
+
+stages:
+
+# =========================
+# 🔧 STAGE 1: INIT
+# =========================
+- stage: Init
+  displayName: "Terraform Init"
+  jobs:
+  - job: InitJob
+    steps:
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        backendServiceArm: 'newconnection'
+        backendAzureRmStorageAccountName: 'iphone'
+        backendAzureRmContainerName: 'mycontainer'
+        backendAzureRmKey: 'my.tfstate'
+
+# =========================
+# 🧹 STAGE 2: LINTING
+# =========================
+- stage: Linting
+  displayName: "Terraform Linting"
+  dependsOn: Init
+  jobs:
+  - job: LintJob
+    steps:
+
+    # Install TFLint
+    - script: |
+        curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+        tflint --version
+      displayName: "Install TFLint"
+
+    # Terraform format check
+    - script: terraform fmt -check
+      displayName: "Terraform Format Check"
+
+    # Run TFLint
+    - script: tflint
+      displayName: "Run TFLint"
+
+# =========================
+# 🔐 STAGE 3: SECURITY SCAN
+# =========================
+- stage: Scan
+  displayName: "Security Scan"
+  dependsOn: Linting
+  jobs:
+  - job: ScanJob
+    steps:
+
+    # Install Checkov
+    - script: |
+        pip install checkov
+        checkov --version
+      displayName: "Install Checkov"
+
+    # Run scan
+    - script: checkov -d . --soft-fail
+      displayName: "Run Checkov"
+
+# =========================
+# 📋 STAGE 4: PLAN
+# =========================
+- stage: Plan
+  displayName: "Terraform Plan"
+  dependsOn: Scan
+  jobs:
+  - job: PlanJob
+    steps:
+
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        backendServiceArm: 'newconnection'
+        backendAzureRmStorageAccountName: 'iphone'
+        backendAzureRmContainerName: 'mycontainer'
+        backendAzureRmKey: 'my.tfstate'
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        environmentServiceNameAzureRM: 'newconnection'
+
+
+
+
+# =========================
+# 🚀 STAGE 5: APPLY
+# =========================
+- stage: Apply
+  displayName: "Terraform Apply"
+  dependsOn: Plan
+  condition: succeeded()
+  jobs:
+  - job: ApplyJob
+    steps:
+
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        backendServiceArm: 'newconnection'
+        backendAzureRmStorageAccountName: 'iphone'
+        backendAzureRmContainerName: 'mycontainer'
+        backendAzureRmKey: 'my.tfstate'
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        environmentServiceNameAzureRM: 'newconnection'
+
+
+- stage: Destroy
+  displayName: "terraform destroy"
+  dependsOn: Apply
+  condition: succeeded()
+  jobs:
+  - job: Destroyjob
+    steps:
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        backendServiceArm: 'newconnection'
+        backendAzureRmStorageAccountName: 'iphone'
+        backendAzureRmContainerName: 'mycontainer'
+        backendAzureRmKey: 'my.tfstate'
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'destroy'
+        environmentServiceNameAzureRM: 'newconnection'
