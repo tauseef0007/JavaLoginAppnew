@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: java-login-app
-        image: tauseef0007/java-login-app:c065d0f4dfc716bffe934df72b631ab94fc9cee1
+        image: tauseef0007/java-login-app:15c864b12b4f10a823d7d51f76905fe92807338f
         ports:
         - containerPort: 8080
         resources:
